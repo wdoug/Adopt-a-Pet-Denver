@@ -2,7 +2,6 @@
 
 var request = require('request');
 var restify = require('restify');
-// var chalk = require('chalk');
 var _ = require('lodash');
 
 var server = restify.createServer({
@@ -11,11 +10,11 @@ var server = restify.createServer({
 });
 
 var regex = {
-    'one': new RegExp(/ID=([^&]+)/gi), // id
-    'two': new RegExp(/<font\ class='Title'>*([^&]+)/gi), // name 
+    'one' : new RegExp(/ID=([^&]+)/gi), // id
+    'two' : new RegExp(/<font\ class='Title'>*([^&]+)/gi), // name 
 };
 
-var _id;
+var _id, errorHandler;
 var idParams = [];
 
 var endpoint = 'http://www.petharbor.com/petoftheday.asp?shelterlist=%27DNVR%27&imgwid=160&imght=120&imgname=POD&bgcolor=FFFFFF&fgcolor=000000&type=dog&border=0&availableonly=1&SEQ=0&SHOWSTAT=1&fontface=arial&fontsize=2&noclientinfo=0&bigtitle=1&source=results';
@@ -34,11 +33,15 @@ restify.CORS.ALLOW_HEADERS.push('withcredentials');
 restify.CORS.ALLOW_HEADERS.push('x-requested-with');
 server.use(restify.CORS());
 
-server.get(/\/public\/?.*/, restify.serveStatic({
-    directory: './public'
-}));
+// server.get(/\/?.*/, restify.serveStatic({
+//     directory: './public'
+// }));
 
-server.get('/api/', function(req, res) {
+// server.get('/', function(req, res) {
+//     res.send('public/index.html');
+// });
+
+server.get('/api', function(req, res) {
     request(endpoint, function(err, req, body) {
         errorHandler(err);
         var _body = body,
@@ -75,7 +78,7 @@ server.get('/api/', function(req, res) {
 
             try {
                 if (_.isNull(responseBody)) {
-                    console.log(responseBody)
+                    console.log(responseBody);
                     res.end('error in parsing second response');
                 } else {
                     desc = responseBody[1];
@@ -95,15 +98,16 @@ server.get('/api/', function(req, res) {
             };
 
             res.send(animaldata);
-            // res.end();
+
         });
     });
 });
 
-var errorHandler = function(e, next) {
+errorHandler = function(e) {
     if (e) {
+        throw e;
         console.error(e);
-        next(e);
+        // next(e);
     }
     // if (e) return next(new restify.InvalidArgumentError(JSON.stringify(e.errors)));
 };
@@ -111,4 +115,4 @@ var errorHandler = function(e, next) {
 var port = process.env.PORT || 8080;
 server.listen(port, function() {
     console.log('%s listening at %s', server.name, server.url);
-})
+});
