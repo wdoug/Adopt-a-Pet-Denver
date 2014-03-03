@@ -7,10 +7,10 @@ $(function() {
     var api = {
         one: 'http://adoptabledenver.herokuapp.com/', // official
         two: 'http://adopt-a-pet-denver.herokuapp.com/', // david's test api
-        local: '/api'
+        local: 'http://0.0.0.0:8080/api'
     };
 
-    $.getJSON(api.local, function(data) {
+    $.getJSON(api.two, function(data) {
         animaldata = data;
         // data is a JavaScript object now. Handle it as such
         //Get the HTML from the template   in the script tag
