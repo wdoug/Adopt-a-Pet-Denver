@@ -34,9 +34,9 @@ restify.CORS.ALLOW_HEADERS.push('withcredentials');
 restify.CORS.ALLOW_HEADERS.push('x-requested-with');
 server.use(restify.CORS());
 
-server.get(/^\/.*$/, require('restify').serveStatic({
-  'directory': './public',
-  'default': 'index.html'
+server.get(/^\/.*$/, restify.serveStatic({
+    'directory': './public',
+    'default': 'index.html'
 }));
 
 server.get('/api', function(req, res, next) {

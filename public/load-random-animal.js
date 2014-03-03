@@ -10,14 +10,18 @@ $(function() {
         local: 'http://0.0.0.0:8080/api'
     };
 
-    $.getJSON(api.two, function(data) {
-        animaldata = data;
-        // data is a JavaScript object now. Handle it as such
-        //Get the HTML from the template   in the script tag
-        theTemplateScript = $('#animal-template').html();
+    theTemplateScript = $('#animal-template').html();
+    compiledTemplate = Handlebars.compile(theTemplateScript);
 
-        //Compile the template
-        compiledTemplate = Handlebars.compile(theTemplateScript);
-        $('#the-thing').append(compiledTemplate(animaldata));
-    });
+    $.getJSON(api.two, function(data) {
+            animaldata = data;
+        })
+        .complete(function() {
+            //Compile the template
+            $('#the-thing').append(compiledTemplate(animaldata));
+        })
+        .fail(function() {
+            console.log('xhr failed');
+        });
+
 });
