@@ -10,11 +10,6 @@ var server = restify.createServer({
     version: '0.0.1'
 });
 
-var regex = {
-    'one': new RegExp(/ID=([^&]+)/gi), // id
-    'two': new RegExp(/<font\ class="Title">*([^&]+)/gi), // name 
-};
-
 var desc, _id;
 
 var endpoint = 'http://www.petharbor.com/petoftheday.asp?shelterlist=%27DNVR%27&imgwid=160&imght=120&imgname=POD&bgcolor=FFFFFF&fgcolor=000000&type=dog&border=0&availableonly=1&SEQ=0&SHOWSTAT=1&fontface=arial&fontsize=2&noclientinfo=0&bigtitle=1&source=results';
@@ -53,11 +48,11 @@ server.get('/api', function(req, res, next) {
 
         var endpointTwo = 'http://www.petharbor.com/detail.asp?ID=' +
             _id + '&LOCATION=DNVR&searchtype=rnd&shelterlist=%27DNVR%27&where=dummy&kiosk=1';
-
+        console.log(endpointTwo);
         request(endpointTwo, function(err, req, body) {
             if (err) return next(err);
             try {
-                var nameParams = regex.two.exec(body);
+                var nameParams = /<font\ class="Title">*([^&]+)/gi.exec(body);
                 // console.log(body);
             } catch (e) {
                 console.log(e);
@@ -76,7 +71,7 @@ server.get('/api', function(req, res, next) {
             try {
                 if (_.isNull(responseBody)) {
                     console.log('printing : ' + responseBody);
-                    next(new restify.InvalidArgumentError('error in parsing first response, got null from responseBody'));
+                    next(new restify.InvalidArgumentError('error in parsing second response, got null from responseBody'));
                 } else {
                     var desc = responseBody[1];
                 }
