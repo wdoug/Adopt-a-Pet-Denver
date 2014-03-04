@@ -14,7 +14,7 @@ $(function() {
     theTemplateScript = $('#animal-template').html();
     compiledTemplate = Handlebars.compile(theTemplateScript);
 
-    $.getJSON(api.two, function(data) {
+    $.getJSON(api.local, function(data) {
         animaldata = data;
     })
         .complete(function() {

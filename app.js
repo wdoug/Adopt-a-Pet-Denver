@@ -4,7 +4,7 @@ var request = require('request');
 var restify = require('restify');
 var _ = require('lodash');
 var chalk = require('chalk');
-
+// var fs = require
 var server = restify.createServer({
     name: 'adoptDenver',
     version: '0.0.1'
@@ -81,12 +81,13 @@ server.get('/api', function(req, res, next) {
                 desc: desc
             };
             res.send(animaldata);
-            res.end();
+            return next();
         });
     });
 });
 
-server.get(/^\/.*$/, restify.serveStatic({
+server.get(/.*/, restify.serveStatic({
+// server.get(/^\/.*$/, restify.serveStatic({
     'directory': './public',
     'default': 'index.html'
 }));
