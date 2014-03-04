@@ -33,29 +33,22 @@ server.get('/api', function(req, res, next) {
     request(endpoint, function(err, req, body) {
         if (err) return next(err);
 
-        try{
-                var idParams = /ID=([^&]+)/gi.exec(body)
-                console.log('extracting id: ', idParams[1]);
-        }catch(e){
+        try {
+            var idParams = /ID=([^&]+)/gi.exec(body)
+        } catch (e) {
             throw e;
         };
-        
-        
+
         _id = idParams[1];
 
-        var stringRegExp = "[^" + _id + "<BR><BR><\/font>][^<BR><br>]"
-        var regexpSix = new RegExp(stringRegExp, "g");
-
         var endpointTwo = 'http://www.petharbor.com/detail.asp?ID=' +
-            _id + '&LOCATION=DNVR&searchtype=rnd&shelterlist=%27DNVR%27&where=dummy&kiosk=1';
-        console.log(endpointTwo);
+        _id + '&LOCATION=DNVR&searchtype=rnd&shelterlist=%27DNVR%27&where=dummy&kiosk=1';
+        
         request(endpointTwo, function(err, req, body) {
             if (err) return next(err);
             try {
                 var nameParams = /<font\ class="Title">*([^&]+)/gi.exec(body);
-                // console.log(body);
             } catch (e) {
-                console.log(e);
                 throw e;
             }
             if (_.isNull(nameParams)) {
@@ -65,8 +58,8 @@ server.get('/api', function(req, res, next) {
             }
             var name = nameParams[1];
             var stringRegExp = _id + "<BR><BR><\/font>(.*?)<BR><br>";
-            var regexpSeven = new RegExp(stringRegExp, "g");
-            var responseBody = regexpSeven.exec(body);
+            var _regex = new RegExp(stringRegExp, "g");
+            var responseBody = _regex.exec(body);
 
             try {
                 if (_.isNull(responseBody)) {
@@ -76,7 +69,6 @@ server.get('/api', function(req, res, next) {
                     var desc = responseBody[1];
                 }
             } catch (e) {
-                // console.log(e);
                 throw e;
             }
 
@@ -88,28 +80,16 @@ server.get('/api', function(req, res, next) {
                 id: _id,
                 desc: desc
             };
-
             res.send(animaldata);
-            // res.end();
+            res.end();
         });
     });
 });
 
-// server.get('/', restify.serveStatic({
-//     'directory': './public',
-//     'default': 'index.html'
-// }));
-
 server.get(/^\/.*$/, restify.serveStatic({
-    // server.get('/app', restify.serveStatic({
     'directory': './public',
     'default': 'index.html'
 }));
-
-var errorHandler = function(err) {
-    console.error(err);
-    if (err) return next(err);
-};
 
 var port = process.env.PORT || 8080;
 server.listen(port, function() {
