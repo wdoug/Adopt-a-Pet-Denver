@@ -7,7 +7,7 @@ $(function() {
 
     var api = {
         one: 'http://adoptabledenver.herokuapp.com/', // official
-        two: 'http://adopt-a-pet-denver.herokuapp.com/', // david's test api
+        two: 'http://adopt-a-pet-denver.herokuapp.com/api', // david's test api
         local: '/api' // local call
     };
 
