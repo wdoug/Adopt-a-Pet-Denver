@@ -21,6 +21,8 @@ An API to serve data for animals currently in Denver animal shelters ready for a
 
 [Demo](http://adopt-a-pet-denver.herokuapp.com/)
 
+[API](http://adopt-a-pet-denver.herokuapp.com/api)
+
 *More soon..*
 
 -----------------------
