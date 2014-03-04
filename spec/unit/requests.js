@@ -12,7 +12,7 @@ describe('web scrap request', function() {
 
         proxy = new hoxy.Proxy();
         proxy.listen(5050);
-        // request = require('request');
+        request = require('request');
         firstEndPoint = 'tests';
 
     });
@@ -20,7 +20,7 @@ describe('web scrap request', function() {
     it('should be able to make first request for web scrapping', function(done) {
         proxy.intercept('request', function(req, res) {
             console.log('request was made to: ' + req.fullUrl());
-            expect(req.fullUrl()).not.toBeNull();
+            expect(req.fullUrl()).toBeNull();
         });
         done();
     });
