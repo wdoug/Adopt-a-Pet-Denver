@@ -1,7 +1,7 @@
 var request = require('request');
 var restify = require('restify');
-// var chalk = require('chalk');
 var _ = require('lodash');
+// var chalk = require('chalk');
 
 var server = restify.createServer({
     name: 'adoptDenver',
@@ -13,10 +13,7 @@ var regex = {
     'two': new RegExp(/<font\ class="Title">*([^&]+)/gi), // name 
 };
 
-var name, desc, _id;
-
-var _id = undefined;
-var idParams = [];
+var desc, _id, idParams = [];
 
 var endpoint = 'http://www.petharbor.com/petoftheday.asp?shelterlist=%27DNVR%27&imgwid=160&imght=120&imgname=POD&bgcolor=FFFFFF&fgcolor=000000&type=dog&border=0&availableonly=1&SEQ=0&SHOWSTAT=1&fontface=arial&fontsize=2&noclientinfo=0&bigtitle=1&source=results';
 
@@ -25,7 +22,7 @@ server.use(restify.queryParser());
 server.use(restify.bodyParser());
 server.use(restify.fullResponse());
 
-//  CORS
+// CORS
 restify.CORS.ALLOW_HEADERS.push('accept');
 restify.CORS.ALLOW_HEADERS.push('sid');
 restify.CORS.ALLOW_HEADERS.push('lang');
@@ -34,32 +31,24 @@ restify.CORS.ALLOW_HEADERS.push('withcredentials');
 restify.CORS.ALLOW_HEADERS.push('x-requested-with');
 server.use(restify.CORS());
 
-server.get(/^\/.*$/, restify.serveStatic({
-    'directory': './public',
-    'default': 'index.html'
-}));
-
 server.get('/api', function(req, res, next) {
 
     request(endpoint, function(err, req, body) {
         errorHandler(err);
-        var _body = body;
-        idParams = regex.one.exec(_body);
+        idParams = regex.one.exec(body);
         _id = idParams[1];
         var stringRegExp = "[^" + _id + "<BR><BR><\/font>][^<BR><br>]"
         var regexpSix = new RegExp(stringRegExp, "g");
 
-        var endpointTwo = 'http://www.petharbor.com/detail.asp?ID=' + _id + '&LOCATION=DNVR&searchtype=rnd&shelterlist=%27DNVR%27&where=dummy&kiosk=1';
+        var endpointTwo = 'http://www.petharbor.com/detail.asp?ID=' +
+            _id + '&LOCATION=DNVR&searchtype=rnd&shelterlist=%27DNVR%27&where=dummy&kiosk=1';
 
         request(endpointTwo, function(err, req, body) {
             errorHandler(err);
-            var _body = body;
-            var nameParams = regex.two.exec(_body);
-
+            var nameParams = regex.two.exec(body);
             try {
                 if (_.isNull(nameParams)) {
-                    // return next();
-                    res.end("error in parsing first response");
+                    res.send(500,"error in parsing first response");
                 } else {
                     var name = nameParams[1];
                 }
@@ -71,7 +60,7 @@ server.get('/api', function(req, res, next) {
 
             var stringRegExp = _id + "<BR><BR><\/font>(.*?)<BR><br>";
             var regexpSeven = new RegExp(stringRegExp, "g");
-            var responseBody = regexpSeven.exec(_body);
+            var responseBody = regexpSeven.exec(body);
 
             try {
                 if (_.isNull(responseBody)) {
@@ -100,15 +89,23 @@ server.get('/api', function(req, res, next) {
     });
 });
 
-var errorHandler = function(e) {
-    if (e) {
-        console.error(e);
-        next(e);
-    }
-    // if (e) return next(new restify.InvalidArgumentError(JSON.stringify(e.errors)));
-}
+// server.get('/', restify.serveStatic({
+//     'directory': './public',
+//     'default': 'index.html'
+// }));
+
+server.get(/^\/.*$/, restify.serveStatic({
+// server.get('/app', restify.serveStatic({
+    'directory': './public',
+    'default': 'index.html'
+}));
+
+var errorHandler = function(err) {
+    console.error(err);
+    if (err) return next(err);
+};
 
 var port = process.env.PORT || 8080;
 server.listen(port, function() {
     console.log('%s listening at %s', server.name, server.url);
-})
+});
