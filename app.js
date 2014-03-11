@@ -78,6 +78,7 @@ server.get('/api', function(req, res, next) {
                 name: name,
                 pic: "http://www.petharbor.com/get_image.asp?RES=detail&ID=" + _id + "&LOCATION=DNVR",
                 id: _id,
+                link: "http://www.petharbor.com/pet.asp?uaid=DNVR." + _id,
                 desc: desc
             };
             res.send(animaldata);
