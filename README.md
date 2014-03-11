@@ -14,6 +14,7 @@ An API to serve data for animals currently in Denver animal shelters ready for a
 		name: "JERRY",
 		pic: "http://www.petharbor.com/get_image.asp?..JPG",
 		id: "A215848",
+		link: "http://www.petharbor.com/pet.asp?uaid=DNVR.A215848",
 		desc: "I am a neutered male, brown and tan Miniature Pinscher.."
 	}
 
